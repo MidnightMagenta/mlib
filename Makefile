@@ -1,7 +1,8 @@
 CC := gcc
 AR := ar
 
-CFLAGS ?= -O3 -Iinclude
+CFLAGS ?= -O2
+INCDIR := -Iinclude
 ARFLAGS ?= rcs
 
 LIB_TARGET := libm.a
@@ -16,7 +17,7 @@ $(LIB_TARGET): $(LIB_OBJS)
 
 %.o: %.c
 	@echo "CC $@"
-	@$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCDIR) -MMD -MP -c $< -o $@
 
 clean:
 	find . -type f -name '*.[oad]' -delete
