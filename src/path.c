@@ -1,5 +1,5 @@
 #include <ecode.h>
-#include <lib/path.h>
+#include <path.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>

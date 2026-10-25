@@ -1,5 +1,5 @@
 #include <ecode.h>
-#include <lib/stack.h>
+#include <stack.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
