@@ -1,5 +1,5 @@
-#ifndef LIB_STACK_H
-#define LIB_STACK_H
+#ifndef MLIB_LIB_STACK_H
+#define MLIB_LIB_STACK_H
 
 #include <stddef.h>
 

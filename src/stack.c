@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <ecode.h>
 #include <stack.h>
 #include <stddef.h>
@@ -32,6 +33,8 @@ stack_t stack_create(size_t elem_sz, void (*dtor)(void *elem), size_t initial_ca
 }
 
 void stack_free(stack_t s) {
+    assert(s);
+
     if (s->dtor) {
         for (size_t i = 0; i < s->len; i++) { s->dtor((char *) s->s + i * s->elem_sz); }
     }
@@ -40,6 +43,9 @@ void stack_free(stack_t s) {
 }
 
 int stack_push(stack_t s, const void *elem) {
+    assert(s);
+    assert(elem);
+
     if (s->len == s->cap) {
         size_t newcap = s->cap ? s->cap * 2 : STACK_INITIAL_CAP;
         if (newcap > SIZE_MAX / s->elem_sz) { return EC_ALLOCERR; }
@@ -54,6 +60,8 @@ int stack_push(stack_t s, const void *elem) {
 }
 
 int stack_pop(stack_t s, void *out) {
+    assert(s);
+
     if (s->len == 0) { return EC_INVAL; }
     s->len--;
     if (out) { memcpy(out, (char *) s->s + s->len * s->elem_sz, s->elem_sz); }
@@ -61,5 +69,6 @@ int stack_pop(stack_t s, void *out) {
 }
 
 void *stack_peek(const stack_t s) {
+    assert(s);
     return s->len ? (char *) s->s + (s->len - 1) * s->elem_sz : NULL;
 }
