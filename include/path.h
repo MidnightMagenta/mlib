@@ -1,5 +1,5 @@
-#ifndef LIB_PATH_H
-#define LIB_PATH_H
+#ifndef MLIB_PATH_H
+#define MLIB_PATH_H
 
 #include <stddef.h>
 
@@ -11,5 +11,6 @@ char *pftail(const char *path);
 char *proot(const char *path);
 char *ptail(const char *path);
 char *abspath(const char *path);
+char *relpath(const char *a, const char *b);
 
 #endif

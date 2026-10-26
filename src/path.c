@@ -1,4 +1,5 @@
 #include <ecode.h>
+#include <limits.h>
 #include <path.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -147,4 +148,70 @@ char *abspath(const char *path) {
 fail0:
     free(cwd);
     return NULL;
+}
+
+#define MAXC 512
+_Static_assert((int) EC_RUNTIMEERR < 0, "EC_RUNTIMEERR must be negative");
+
+static int split(const char *p, char *buf, char **comp) {
+    int   n;
+    char *save;
+
+    if (p[0] == '/') {
+        snprintf(buf, 2 * PATH_MAX, "%s", p);
+    } else {
+        char cwd[PATH_MAX];
+        if (!getcwd(cwd, sizeof(cwd))) { return EC_RUNTIMEERR; }
+        snprintf(buf, 2 * PATH_MAX, "%s/%s", cwd, p);
+    }
+
+    n = 0;
+    for (char *t = strtok_r(buf, "/", &save); t; t = strtok_r(NULL, "/", &save)) {
+        if (!strcmp(t, ".")) { continue; }
+        if (!strcmp(t, "..")) {
+            if (n) { n--; }
+            continue;
+        }
+        if (n < MAXC) { comp[n++] = t; }
+    }
+
+    return n;
+}
+
+static int relpath_n(const char *a, const char *b, char *out, size_t outsz) {
+    char   abuf[2 * PATH_MAX], bbuf[2 * PATH_MAX];
+    char  *ac[MAXC], *bc[MAXC];
+    int    an, bn, i;
+    size_t len;
+
+    an = split(a, abuf, ac);
+    bn = split(b, bbuf, bc);
+    if (an < 0 || bn < 0) return EC_RUNTIMEERR;
+
+    i = 0;
+    while (i < an && i < bn && !strcmp(ac[i], bc[i])) { i++; }
+
+    len    = 0;
+    out[0] = '\0';
+
+    for (int j = i; j < bn; j++) { len += snprintf(out + len, outsz - len, "%s..", len ? "/" : ""); }
+    for (int j = i; j < an; j++) { len += snprintf(out + len, outsz - len, "%s%s", len ? "/" : "", ac[j]); }
+
+    if (!len) snprintf(out, outsz, ".");
+    return 0;
+}
+
+char *relpath(const char *a, const char *b) {
+    char *buf = malloc(PATH_MAX), *tmp;
+    if (!buf) { return NULL; }
+    if (relpath_n(a, b, buf, PATH_MAX)) {
+        free(buf);
+        return NULL;
+    }
+    tmp = realloc(buf, strlen(buf) + 1);
+    if (!tmp) {
+        free(buf);
+        return NULL;
+    }
+    return tmp;
 }
