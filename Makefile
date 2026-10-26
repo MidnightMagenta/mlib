@@ -8,6 +8,7 @@ ARFLAGS ?= rcs
 LIB_TARGET := libm.a
 LIB_OBJS := src/path.o \
 			src/stack.o \
+			src/dynarr.o
 
 all: $(LIB_TARGET)
 
