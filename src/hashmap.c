@@ -10,7 +10,7 @@
 
 #define INITIAL_BUCKET_CNT 16
 #define LOAD_FACTOR        0.75f
-#define SHOULD_RESIZE(hm)  ((hm)->entry_cnt > (hm)->bucket_cnt * LOAD_FACTOR)
+#define SHOULD_RESIZE(hm)  ((float) (hm)->entry_cnt > ((float) (hm)->bucket_cnt * LOAD_FACTOR))
 
 struct hm_ent {
     size_t           hash;
